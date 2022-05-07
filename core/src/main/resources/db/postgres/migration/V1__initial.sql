@@ -1,0 +1,10 @@
+-- create table users
+-- (
+--     id          uuid not null,
+--     email       varchar(255),
+--     first_name  varchar(255),
+--     password    varchar(255),
+--     second_name varchar(255),
+--     username    varchar(255),
+--     primary key (id)
+-- )
