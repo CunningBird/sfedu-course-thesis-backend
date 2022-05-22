@@ -1,13 +1,14 @@
-package com.cunningbird.thesis.backend.core.entity.service
+package com.cunningbird.thesis.backend.core.entity
 
 import java.util.*
 import javax.persistence.*
 
+@Entity
 data class Advert(
 
-//    @Id
-//    @GeneratedValue
-//    @Column(name = "id", unique = true, nullable = false)
+    @Id
+    @GeneratedValue
+    @Column(name = "id", unique = true, nullable = false)
     private var id: UUID? = null,
 
     private var executorId: UUID? = null,

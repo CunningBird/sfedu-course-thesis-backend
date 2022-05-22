@@ -1,10 +1,12 @@
-package com.cunningbird.thesis.backend.core.entity.appointment
+package com.cunningbird.thesis.backend.core.entity
 
 import java.util.*
 import javax.persistence.Column
+import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
 
+@Entity
 data class Appointment(
 
     @Id
@@ -17,9 +19,5 @@ data class Appointment(
 
     private val appointmentDateTime: Date? = null,
 
-    private val clientName: String? = null,
     private val phoneNumber: String? = null,
-
-    private val customerNote: String? = null,
-    private val executorNote: String? = null
 )

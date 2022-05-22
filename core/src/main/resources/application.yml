@@ -15,7 +15,9 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: validate
+    show-sql: false
   flyway:
+    enabled: true
     url: ${SPRING_DATASOURCE_URL}
     user: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
