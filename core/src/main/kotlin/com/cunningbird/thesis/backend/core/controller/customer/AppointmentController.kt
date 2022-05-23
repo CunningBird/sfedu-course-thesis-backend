@@ -7,6 +7,7 @@ import com.cunningbird.thesis.backend.core.service.AppointmentService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.util.*
 
 @RestController("CustomerAppointmentController")
@@ -17,32 +18,23 @@ class AppointmentController(
 
     @GetMapping
     fun getAppointments(@RequestParam customerId: UUID): ResponseEntity<ListAppointmentsResponse> {
-        val response = ListAppointmentsResponse()
-        service.getAppointmentsForCustomer(customerId).forEach { appointment ->
-            response.list.add(
-                OneAppointmentResponse(
-                    appointment.id,
-                    appointment.advertId,
-                    appointment.customerId,
-                    appointment.executorId,
-                    appointment.appointmentDateTime,
-                )
-            )
+        try {
+            return ResponseEntity(service.getAppointmentsForCustomer(customerId), HttpStatus.OK)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
         }
-        return ResponseEntity(response, HttpStatus.OK)
     }
 
     @GetMapping("{appointmentId}")
-    fun getAppointment(@RequestParam customerId: UUID, @PathVariable appointmentId: UUID): ResponseEntity<OneAppointmentResponse> {
-        val appointment = service.getAppointmentForCustomer(customerId, appointmentId)
-        val response = OneAppointmentResponse(
-            appointment.id,
-            appointment.advertId,
-            appointment.customerId,
-            appointment.executorId,
-            appointment.appointmentDateTime,
-        )
-        return ResponseEntity(response, HttpStatus.OK)
+    fun getAppointment(
+        @RequestParam customerId: UUID,
+        @PathVariable appointmentId: UUID
+    ): ResponseEntity<OneAppointmentResponse> {
+        try {
+            return ResponseEntity(service.getAppointmentForCustomer(customerId, appointmentId), HttpStatus.OK)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
+        }
     }
 
     @PostMapping("{advertId}")
@@ -51,7 +43,10 @@ class AppointmentController(
         @PathVariable advertId: UUID,
         @RequestBody request: CreateAppointmentRequest
     ) {
-        val date = request.date ?: throw Exception("Date is not set")
-        service.createAppointment(customerId, advertId, date)
+        try {
+            service.createAppointment(customerId, advertId, request)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
+        }
     }
 }

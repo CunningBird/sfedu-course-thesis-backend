@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.server.ResponseStatusException
 import java.util.*
 
 @RestController("CustomerServiceController")
@@ -19,31 +20,19 @@ class AdvertController(
 ) {
     @GetMapping
     fun getAdverts(@RequestParam customerId: UUID): ResponseEntity<ListAdvertsResponse> {
-        val response = ListAdvertsResponse()
-        service.getAdverts().forEach { advert ->
-            response.list.add(
-                OneAdvertResponse(
-                    advert.id,
-                    advert.title,
-                    advert.price,
-                    advert.description,
-                    advert.image
-                )
-            )
+        try {
+            return ResponseEntity(service.getAdvertsForCustomer(), HttpStatus.OK)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
         }
-        return ResponseEntity(response, HttpStatus.OK)
     }
 
     @GetMapping("{advertId}")
     fun getAdverts(@RequestParam customerId: UUID, @PathVariable advertId: UUID): ResponseEntity<OneAdvertResponse> {
-        val advert = service.getAdvert(advertId)
-        val response = OneAdvertResponse(
-            advert.id,
-            advert.title,
-            advert.price,
-            advert.description,
-            advert.image
-        )
-        return ResponseEntity(response, HttpStatus.OK)
+        try {
+            return ResponseEntity(service.getAdvertForCustomer(advertId), HttpStatus.OK)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
+        }
     }
 }

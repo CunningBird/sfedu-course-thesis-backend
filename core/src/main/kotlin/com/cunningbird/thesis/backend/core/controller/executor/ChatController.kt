@@ -8,6 +8,7 @@ import com.cunningbird.thesis.backend.core.service.ChatService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.util.*
 
 @RestController("ExecutorChatController")
@@ -17,66 +18,33 @@ class ChatController(
 ) {
     @GetMapping
     fun getChats(@RequestParam executorId: UUID): ResponseEntity<ListChatsResponse> {
-        val response = ListChatsResponse()
-        val chatInfo = service.getChatsForExecutor(executorId)
-        chatInfo.forEach { chat ->
-            val messages = mutableListOf<OneMessageResponse>()
-            chat.messages.forEach { message ->
-                messages.add(
-                    OneMessageResponse(
-                        message.id,
-                        message.authorId,
-                        message.text,
-                        message.date
-                    )
-                )
-            }
-
-            response.list.add(
-                OneChatResponse(
-                    chat.id,
-                    chat.executorId,
-                    chat.customerId,
-                    messages
-                )
-            )
-
+        try {
+            return ResponseEntity(service.getChatsForExecutor(executorId), HttpStatus.OK)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
         }
-
-        return ResponseEntity(response, HttpStatus.OK)
     }
 
     @GetMapping("{chatId}")
     fun getChat(@RequestParam executorId: UUID, @PathVariable chatId: UUID): ResponseEntity<OneChatResponse> {
-        val chat = service.getChatForExecutor(executorId, chatId)
-
-        val messages = mutableListOf<OneMessageResponse>()
-        chat.messages.forEach { message ->
-            messages.add(
-                OneMessageResponse(
-                    message.id,
-                    message.authorId,
-                    message.text,
-                    message.date
-                )
-            )
+        try {
+            return ResponseEntity(service.getChatForExecutor(executorId, chatId), HttpStatus.OK)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
         }
-
-        val response = OneChatResponse(
-            chat.id,
-            chat.executorId,
-            chat.customerId,
-            messages
-        )
-
-        return ResponseEntity(response, HttpStatus.OK)
     }
 
     @PostMapping("{chatId}")
-    fun sendMessage(@RequestParam executorId: UUID, @PathVariable chatId: UUID, @RequestBody message: SendMessageRequest) {
-        val text = message.text ?: throw Exception("Text is not set")
-        val date = message.date ?: throw Exception("Date is not set")
-        service.sendMessageForExecutor(executorId, chatId, text, date)
+    fun sendMessage(
+        @RequestParam executorId: UUID,
+        @PathVariable chatId: UUID,
+        @RequestBody message: SendMessageRequest
+    ) {
+        try {
+            service.sendMessageForExecutor(executorId, chatId, message)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
+        }
     }
 
     // TODO implement update method

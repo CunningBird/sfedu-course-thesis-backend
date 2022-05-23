@@ -6,6 +6,7 @@ import com.cunningbird.thesis.backend.core.service.AdvertService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.util.*
 
 @RestController("ExecutorServiceController")
@@ -15,33 +16,20 @@ class AdvertController(
 ) {
     @GetMapping
     fun getAdverts(@RequestParam executorId: UUID): ResponseEntity<ListAdvertsResponse> {
-        val response = ListAdvertsResponse()
-        service.getAdvertsByExecutor(executorId).forEach { advert ->
-            response.list.add(
-                OneAdvertResponse(
-                    advert.id,
-                    advert.title,
-                    advert.price,
-                    advert.description,
-                    advert.image
-                )
-            )
+        try {
+            return ResponseEntity(service.getAdvertsByExecutor(executorId), HttpStatus.OK)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
         }
-
-        return ResponseEntity(response, HttpStatus.OK)
     }
 
     @GetMapping("{advertId}")
     fun getAdvert(@RequestParam executorId: UUID, @PathVariable advertId: UUID): ResponseEntity<OneAdvertResponse> {
-        val advert = service.getAdvertByExecutor(executorId, advertId)
-        val response = OneAdvertResponse(
-            advert.id,
-            advert.title,
-            advert.price,
-            advert.description,
-            advert.image
-        )
-        return ResponseEntity(response, HttpStatus.OK)
+        try {
+            return ResponseEntity(service.getAdvertByExecutor(executorId, advertId), HttpStatus.OK)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
+        }
     }
 
 //    TODO implement this

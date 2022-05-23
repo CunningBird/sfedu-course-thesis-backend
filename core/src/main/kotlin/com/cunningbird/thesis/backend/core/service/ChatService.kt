@@ -1,10 +1,15 @@
 package com.cunningbird.thesis.backend.core.service
 
+import com.cunningbird.thesis.backend.core.dto.request.SendMessageRequest
+import com.cunningbird.thesis.backend.core.dto.response.ListChatsResponse
+import com.cunningbird.thesis.backend.core.dto.response.OneChatResponse
+import com.cunningbird.thesis.backend.core.dto.response.OneMessageResponse
 import com.cunningbird.thesis.backend.core.entity.Chat
 import com.cunningbird.thesis.backend.core.entity.Message
 import com.cunningbird.thesis.backend.core.repository.ChatRepository
 import com.cunningbird.thesis.backend.core.repository.MessageRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -19,8 +24,8 @@ class ChatService(
     init {
         val chat1 = Chat(
             UUID.randomUUID(),
-            UUID.fromString("bbe0fe62-38d1-11ec-8d3d-0242ac999998"),
             UUID.fromString("bbe0fe62-38d1-11ec-8d3d-0242ac999997"),
+            UUID.fromString("bbe0fe62-38d1-11ec-8d3d-0242ac999998"),
         ).apply {
             this.messages = arrayListOf(
                 Message(
@@ -99,15 +104,65 @@ class ChatService(
         chatRepository.save(chat1)
     }
 
-    fun getChatsForCustomer(customerId: UUID): List<Chat> {
-        return chatRepository.findAllByCustomerId(customerId)
+    fun getChatsForCustomer(customerId: UUID): ListChatsResponse {
+        val response = ListChatsResponse()
+        val chatInfo = chatRepository.findAllByCustomerId(customerId)
+        chatInfo.forEach { chat ->
+            val messages = mutableListOf<OneMessageResponse>()
+            chat.messages.forEach { message ->
+                messages.add(
+                    OneMessageResponse(
+                        message.id,
+                        message.authorId,
+                        message.text,
+                        message.date
+                    )
+                )
+            }
+
+            response.list.add(
+                OneChatResponse(
+                    chat.id,
+                    chat.executorId,
+                    chat.customerId,
+                    messages
+                )
+            )
+
+        }
+        return response
     }
 
-    fun getChatForCustomer(customerId: UUID, id: UUID): Chat {
-        return chatRepository.findByIdAndCustomerId(id, customerId).orElseThrow { Exception("Chat not found") }
+    fun getChatForCustomer(customerId: UUID, id: UUID): OneChatResponse {
+
+        val chat = chatRepository.findByIdAndCustomerId(id, customerId).orElseThrow { Exception("Chat not found") }
+
+        val messages = mutableListOf<OneMessageResponse>()
+        chat.messages.forEach { message ->
+            messages.add(
+                OneMessageResponse(
+                    message.id,
+                    message.authorId,
+                    message.text,
+                    message.date
+                )
+            )
+        }
+
+        val response = OneChatResponse(
+            chat.id,
+            chat.executorId,
+            chat.customerId,
+            messages
+        )
+
+        return response
     }
 
-    fun sendMessageForCustomer(customerId: UUID, chatId: UUID, text: String, date: Date) {
+    @Transactional
+    fun sendMessageForCustomer(customerId: UUID, chatId: UUID, message: SendMessageRequest) {
+        val text = message.text ?: throw Exception("Text is not set")
+        val date = message.date ?: throw Exception("Date is not set")
         val chat = chatRepository.findByIdAndCustomerId(chatId, customerId).orElseThrow { Exception("Chat not found") }
         val message = Message().apply {
             this.authorId = customerId
@@ -118,15 +173,61 @@ class ChatService(
         messageRepository.save(message)
     }
 
-    fun getChatsForExecutor(executorId: UUID): List<Chat> {
-        return chatRepository.findAllByExecutorId(executorId)
+    fun getChatsForExecutor(executorId: UUID): ListChatsResponse {
+        val response = ListChatsResponse()
+        val chatInfo = chatRepository.findAllByExecutorId(executorId)
+        chatInfo.forEach { chat ->
+            val messages = mutableListOf<OneMessageResponse>()
+            chat.messages.forEach { message ->
+                messages.add(
+                    OneMessageResponse(
+                        message.id,
+                        message.authorId,
+                        message.text,
+                        message.date
+                    )
+                )
+            }
+            response.list.add(
+                OneChatResponse(
+                    chat.id,
+                    chat.executorId,
+                    chat.customerId,
+                    messages
+                )
+            )
+        }
+        return response
     }
 
-    fun getChatForExecutor(executorId: UUID, id: UUID): Chat {
-        return chatRepository.findByIdAndExecutorId(id, executorId).orElseThrow { Exception("Chat not found") }
+    fun getChatForExecutor(executorId: UUID, id: UUID): OneChatResponse {
+        val chat = chatRepository.findByIdAndExecutorId(id, executorId).orElseThrow { Exception("Chat not found") }
+
+        val messages = mutableListOf<OneMessageResponse>()
+        chat.messages.forEach { message ->
+            messages.add(
+                OneMessageResponse(
+                    message.id,
+                    message.authorId,
+                    message.text,
+                    message.date
+                )
+            )
+        }
+
+        val response = OneChatResponse(
+            chat.id,
+            chat.executorId,
+            chat.customerId,
+            messages
+        )
+        return response
     }
 
-    fun sendMessageForExecutor(executorId: UUID, chatId: UUID, text: String, date: Date) {
+    @Transactional
+    fun sendMessageForExecutor(executorId: UUID, chatId: UUID, message: SendMessageRequest) {
+        val text = message.text ?: throw Exception("Text is not set")
+        val date = message.date ?: throw Exception("Date is not set")
         val chat = chatRepository.findByIdAndExecutorId(chatId, executorId).orElseThrow { Exception("Chat not found") }
         val message = Message().apply {
             this.authorId = executorId

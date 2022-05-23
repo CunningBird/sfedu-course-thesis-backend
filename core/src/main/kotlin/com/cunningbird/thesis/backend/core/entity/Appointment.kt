@@ -1,10 +1,7 @@
 package com.cunningbird.thesis.backend.core.entity
 
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 data class Appointment(
@@ -14,9 +11,12 @@ data class Appointment(
     @Column(name = "id", unique = true, nullable = false)
     var id: UUID? = null,
 
-    var advertId: UUID? = null,
     var customerId: UUID? = null,
     var executorId: UUID? = null,
 
-    var appointmentDateTime: Date? = null,
+    var date: Date? = null,
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
+    @JoinColumn(name = "advert_id", nullable = false)
+    var advert: Advert? = null
 )
