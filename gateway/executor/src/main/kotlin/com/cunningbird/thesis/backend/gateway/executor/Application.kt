@@ -9,13 +9,3 @@ class Application
 fun main(args: Array<String>) {
     runApplication<Application>(*args)
 }
-
-// TODO Contract with clients
-
-// TODO Enable Web Security
-
-// TODO Exclude Swagger from auth
-
-// TODO Validate accessToken in WebSecurityFilter
-
-// TODO Connect to BFB using gRPC

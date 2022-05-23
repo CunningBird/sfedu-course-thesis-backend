@@ -68,8 +68,6 @@ class WebSecurityConfig(
         return http.build()
     }
 
-    // TODO Save all data from OAuth2 in database
-
     @Bean
     fun registeredClientRepository(): RegisteredClientRepository {
         return RegisteredClientRepositoryImpl()

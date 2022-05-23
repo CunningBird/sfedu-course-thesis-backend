@@ -9,12 +9,13 @@ data class Advert(
     @Id
     @GeneratedValue
     @Column(name = "id", unique = true, nullable = false)
-    private var id: UUID? = null,
+    var id: UUID? = null,
 
-    private var executorId: UUID? = null,
+    var executorId: UUID? = null,
 
-    private var title: String? = null,
-    private var price: Double? = null,
-    private var address: String? = null,
-    private var description: String? = null,
+    var title: String? = null,
+    var price: Double? = null,
+    var address: String? = null,
+    var description: String? = null,
+    var image: String? = null,
 )

@@ -12,12 +12,11 @@ data class Appointment(
     @Id
     @GeneratedValue
     @Column(name = "id", unique = true, nullable = false)
-    private var id: UUID? = null,
+    var id: UUID? = null,
 
-    private var serviceId: UUID? = null,
-    private var customerId: UUID? = null,
+    var advertId: UUID? = null,
+    var customerId: UUID? = null,
+    var executorId: UUID? = null,
 
-    private val appointmentDateTime: Date? = null,
-
-    private val phoneNumber: String? = null,
+    var appointmentDateTime: Date? = null,
 )

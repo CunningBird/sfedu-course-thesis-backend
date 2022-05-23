@@ -1,8 +1,8 @@
-package com.cunningbird.thesis.backend.core.dto.response.service
+package com.cunningbird.thesis.backend.core.dto.response
 
 import java.util.*
 
-data class OneServiceResponse(
+data class OneAdvertResponse(
     var id: UUID? = null,
     var title: String? = null,
     var price: Double? = null,
