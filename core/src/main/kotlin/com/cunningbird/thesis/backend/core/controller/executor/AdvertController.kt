@@ -1,9 +1,7 @@
 package com.cunningbird.thesis.backend.core.controller.executor
 
-import com.cunningbird.thesis.backend.core.dto.request.service.CreateServiceRequest
-import com.cunningbird.thesis.backend.core.dto.request.service.UpdateServiceRequest
-import com.cunningbird.thesis.backend.core.dto.response.service.ListServicesResponse
-import com.cunningbird.thesis.backend.core.dto.response.service.OneServiceResponse
+import com.cunningbird.thesis.backend.core.dto.response.ListAdvertsResponse
+import com.cunningbird.thesis.backend.core.dto.response.OneAdvertResponse
 import com.cunningbird.thesis.backend.core.service.AdvertService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -11,32 +9,50 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController("ExecutorServiceController")
-@RequestMapping("executor/services")
+@RequestMapping("executor/adverts")
 class AdvertController(
     private val service: AdvertService
 ) {
-
     @GetMapping
-    fun getServices(@RequestParam executorId: UUID): ResponseEntity<ListServicesResponse> {
+    fun getAdverts(@RequestParam executorId: UUID): ResponseEntity<ListAdvertsResponse> {
+        val response = ListAdvertsResponse()
+        service.getAdvertsByExecutor(executorId).forEach { advert ->
+            response.list.add(
+                OneAdvertResponse(
+                    advert.id,
+                    advert.title,
+                    advert.price,
+                    advert.description,
+                    advert.image
+                )
+            )
+        }
 
-        val response = ListServicesResponse(UUID.randomUUID())
         return ResponseEntity(response, HttpStatus.OK)
     }
 
-    @GetMapping("{serviceId}")
-    fun getService(@RequestParam executorId: UUID, @PathVariable serviceId: UUID): ResponseEntity<OneServiceResponse?> {
-
-        val response = OneServiceResponse(UUID.randomUUID())
+    @GetMapping("{advertId}")
+    fun getAdvert(@RequestParam executorId: UUID, @PathVariable advertId: UUID): ResponseEntity<OneAdvertResponse> {
+        val advert = service.getAdvertByExecutor(executorId, advertId)
+        val response = OneAdvertResponse(
+            advert.id,
+            advert.title,
+            advert.price,
+            advert.description,
+            advert.image
+        )
         return ResponseEntity(response, HttpStatus.OK)
     }
 
-    @PatchMapping("{serviceId}")
-    fun updateService(@RequestParam executorId: UUID, @PathVariable serviceId: UUID, @RequestBody request: UpdateServiceRequest) {
-
-    }
-
-    @PostMapping
-    fun createService(@RequestParam executorId: UUID, @RequestBody request: CreateServiceRequest) {
-
-    }
+//    TODO implement this
+//
+//    @PostMapping
+//    fun createAdvert(@RequestParam executorId: UUID, @RequestBody request: CreateAdvertRequest) {
+//        service.createAdvert()
+//    }
+//
+//    @PatchMapping("{advertId}")
+//    fun updateAdvert(@RequestParam executorId: UUID, @PathVariable advertId: UUID, @RequestBody request: UpdateAdvertRequest) {
+//        service.updateAdvert()
+//    }
 }

@@ -1,10 +1,7 @@
 package com.cunningbird.thesis.backend.core.entity
 
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 data class Message(
@@ -12,11 +9,14 @@ data class Message(
     @Id
     @GeneratedValue
     @Column(name = "id", unique = true, nullable = false)
-    private var id: UUID? = null,
+    var id: UUID? = null,
 
-    private var chatId: UUID? = null,
-    private var authorId: UUID? = null,
+    var authorId: UUID? = null,
 
-    private val text: String? = null,
-    private val sentDateTime: Date? = null
+    var text: String? = null,
+    var date: Date? = null,
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "chat_id", nullable = false)
+    var chat: Chat? = null
 )

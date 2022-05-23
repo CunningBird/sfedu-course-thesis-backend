@@ -29,7 +29,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
 
   gateway-customer:
-    image: "cunningbird/gateway-customer:0.0.6"
+    image: "cunningbird/gateway-customer:0.0.1"
     container_name: gateway-customer
     build:
       context: gateway/customer
@@ -46,7 +46,7 @@ services:
       - SPRING_BACKEND_URI=http://core:8077
 
   gateway-executor:
-    image: "cunningbird/gateway-executor:0.0.6"
+    image: "cunningbird/gateway-executor:0.0.1"
     container_name: gateway-executor
     build:
       context: gateway/executor
@@ -63,7 +63,7 @@ services:
       - SPRING_BACKEND_URI=http://core:8077
 
   identity:
-    image: "cunningbird/identity:0.0.6"
+    image: "cunningbird/identity:0.0.1"
     container_name: identity
     build:
       context: identity
