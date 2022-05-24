@@ -19,11 +19,11 @@ services:
     build:
       context: core
     ports:
-      - "8077:8080"
+      - "8077:8077"
     depends_on:
       - database
     environment:
-      - SPRING_APPLICATION_PORT=8080
+      - SPRING_APPLICATION_PORT=8077
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/core
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
@@ -34,14 +34,15 @@ services:
     build:
       context: gateway/customer
     ports:
-      - "8078:8080"
+      - "8078:8078"
     links:
       - identity
+      - core
     depends_on:
       - identity
       - core
     environment:
-      - SPRING_APPLICATION_PORT=8080
+      - SPRING_APPLICATION_PORT=8078
       - SPRING_JWT_ISSUER_URI=http://identity:8080
       - SPRING_BACKEND_URI=http://core:8077
 
@@ -51,14 +52,15 @@ services:
     build:
       context: gateway/executor
     ports:
-      - "8079:8080"
+      - "8079:8079"
     links:
       - identity
+      - core
     depends_on:
       - identity
       - core
     environment:
-      - SPRING_APPLICATION_PORT=8080
+      - SPRING_APPLICATION_PORT=8079
       - SPRING_JWT_ISSUER_URI=http://identity:8080
       - SPRING_BACKEND_URI=http://core:8077
 
