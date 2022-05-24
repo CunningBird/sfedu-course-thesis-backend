@@ -16,7 +16,7 @@ class AppointmentController(
 ) {
 
     @GetMapping("/")
-    fun getAppointments(@RequestParam executorId: UUID): ResponseEntity<ListAppointmentsResponse> {
+    fun getAppointments(@RequestHeader("executor_id") executorId: UUID): ResponseEntity<ListAppointmentsResponse> {
         try {
             return ResponseEntity(service.getAppointmentsForExecutor(executorId), HttpStatus.OK)
         } catch (e: Exception) {
@@ -26,7 +26,7 @@ class AppointmentController(
 
     @GetMapping("{appointmentId}")
     fun getAppointment(
-        @RequestParam executorId: UUID,
+        @RequestHeader("executor_id") executorId: UUID,
         @PathVariable appointmentId: UUID
     ): ResponseEntity<OneAppointmentResponse> {
         try {

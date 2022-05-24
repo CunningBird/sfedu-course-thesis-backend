@@ -17,7 +17,7 @@ class ChatController(
     private val service: ChatService
 ) {
     @GetMapping
-    fun getChats(@RequestParam executorId: UUID): ResponseEntity<ListChatsResponse> {
+    fun getChats(@RequestHeader("executor_id") executorId: UUID): ResponseEntity<ListChatsResponse> {
         try {
             return ResponseEntity(service.getChatsForExecutor(executorId), HttpStatus.OK)
         } catch (e: Exception) {
@@ -26,7 +26,7 @@ class ChatController(
     }
 
     @GetMapping("{chatId}")
-    fun getChat(@RequestParam executorId: UUID, @PathVariable chatId: UUID): ResponseEntity<OneChatResponse> {
+    fun getChat(@RequestHeader("executor_id") executorId: UUID, @PathVariable chatId: UUID): ResponseEntity<OneChatResponse> {
         try {
             return ResponseEntity(service.getChatForExecutor(executorId, chatId), HttpStatus.OK)
         } catch (e: Exception) {
@@ -36,7 +36,7 @@ class ChatController(
 
     @PostMapping("{chatId}")
     fun sendMessage(
-        @RequestParam executorId: UUID,
+        @RequestHeader("executor_id") executorId: UUID,
         @PathVariable chatId: UUID,
         @RequestBody message: SendMessageRequest
     ) {

@@ -15,7 +15,7 @@ class AdvertController(
     private val service: AdvertService
 ) {
     @GetMapping
-    fun getAdverts(@RequestParam executorId: UUID): ResponseEntity<ListAdvertsResponse> {
+    fun getAdverts(@RequestHeader("executor_id") executorId: UUID): ResponseEntity<ListAdvertsResponse> {
         try {
             return ResponseEntity(service.getAdvertsByExecutor(executorId), HttpStatus.OK)
         } catch (e: Exception) {
@@ -24,7 +24,7 @@ class AdvertController(
     }
 
     @GetMapping("{advertId}")
-    fun getAdvert(@RequestParam executorId: UUID, @PathVariable advertId: UUID): ResponseEntity<OneAdvertResponse> {
+    fun getAdvert(@RequestHeader("executor_id") executorId: UUID, @PathVariable advertId: UUID): ResponseEntity<OneAdvertResponse> {
         try {
             return ResponseEntity(service.getAdvertByExecutor(executorId, advertId), HttpStatus.OK)
         } catch (e: Exception) {
@@ -35,12 +35,12 @@ class AdvertController(
 //    TODO implement this
 //
 //    @PostMapping
-//    fun createAdvert(@RequestParam executorId: UUID, @RequestBody request: CreateAdvertRequest) {
+//    fun createAdvert(@RequestHeader("executor_id") executorId: UUID, @RequestBody request: CreateAdvertRequest) {
 //        service.createAdvert()
 //    }
 //
 //    @PatchMapping("{advertId}")
-//    fun updateAdvert(@RequestParam executorId: UUID, @PathVariable advertId: UUID, @RequestBody request: UpdateAdvertRequest) {
+//    fun updateAdvert(@RequestHeader("executor_id") executorId: UUID, @PathVariable advertId: UUID, @RequestBody request: UpdateAdvertRequest) {
 //        service.updateAdvert()
 //    }
 }

@@ -17,7 +17,7 @@ class AppointmentController(
 ) {
 
     @GetMapping
-    fun getAppointments(@RequestParam customerId: UUID): ResponseEntity<ListAppointmentsResponse> {
+    fun getAppointments(@RequestHeader("customer_id") customerId: UUID): ResponseEntity<ListAppointmentsResponse> {
         try {
             return ResponseEntity(service.getAppointmentsForCustomer(customerId), HttpStatus.OK)
         } catch (e: Exception) {
@@ -27,7 +27,7 @@ class AppointmentController(
 
     @GetMapping("{appointmentId}")
     fun getAppointment(
-        @RequestParam customerId: UUID,
+        @RequestHeader("customer_id") customerId: UUID,
         @PathVariable appointmentId: UUID
     ): ResponseEntity<OneAppointmentResponse> {
         try {
@@ -39,7 +39,7 @@ class AppointmentController(
 
     @PostMapping("{advertId}")
     fun createAppointment(
-        @RequestParam customerId: UUID,
+        @RequestHeader("customer_id") customerId: UUID,
         @PathVariable advertId: UUID,
         @RequestBody request: CreateAppointmentRequest
     ) {

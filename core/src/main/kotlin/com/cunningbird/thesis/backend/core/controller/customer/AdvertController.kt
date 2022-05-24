@@ -5,11 +5,7 @@ import com.cunningbird.thesis.backend.core.dto.response.ListAdvertsResponse
 import com.cunningbird.thesis.backend.core.service.AdvertService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.util.*
 
@@ -19,7 +15,7 @@ class AdvertController(
     private val service: AdvertService
 ) {
     @GetMapping
-    fun getAdverts(@RequestParam customerId: UUID): ResponseEntity<ListAdvertsResponse> {
+    fun getAdverts(@RequestHeader("customer_id") customerId: UUID): ResponseEntity<ListAdvertsResponse> {
         try {
             return ResponseEntity(service.getAdvertsForCustomer(), HttpStatus.OK)
         } catch (e: Exception) {
@@ -28,7 +24,7 @@ class AdvertController(
     }
 
     @GetMapping("{advertId}")
-    fun getAdverts(@RequestParam customerId: UUID, @PathVariable advertId: UUID): ResponseEntity<OneAdvertResponse> {
+    fun getAdverts(@RequestHeader("customer_id") customerId: UUID, @PathVariable advertId: UUID): ResponseEntity<OneAdvertResponse> {
         try {
             return ResponseEntity(service.getAdvertForCustomer(advertId), HttpStatus.OK)
         } catch (e: Exception) {
