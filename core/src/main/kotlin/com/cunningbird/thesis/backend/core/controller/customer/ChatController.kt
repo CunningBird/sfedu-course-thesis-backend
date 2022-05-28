@@ -37,9 +37,9 @@ class ChatController(
         @RequestHeader("customer_id") customerId: UUID,
         @PathVariable chatId: UUID,
         @RequestBody message: SendMessageRequest
-    ) {
+    ): ResponseEntity<OneMessageResponse> {
         try {
-            service.sendMessageForCustomer(customerId, chatId, message)
+            return ResponseEntity(service.sendMessageForCustomer(customerId, chatId, message), HttpStatus.CREATED)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
         }

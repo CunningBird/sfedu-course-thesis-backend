@@ -42,9 +42,9 @@ class AppointmentController(
         @RequestHeader("customer_id") customerId: UUID,
         @PathVariable advertId: UUID,
         @RequestBody request: CreateAppointmentRequest
-    ) {
+    ): ResponseEntity<OneAppointmentResponse> {
         try {
-            service.createAppointment(customerId, advertId, request)
+            return ResponseEntity(service.createAppointment(customerId, advertId, request), HttpStatus.CREATED)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
         }

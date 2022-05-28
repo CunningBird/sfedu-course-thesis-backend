@@ -26,6 +26,10 @@ class ChatService(
             UUID.randomUUID(),
             UUID.fromString("bbe0fe62-38d1-11ec-8d3d-0242ac999997"),
             UUID.fromString("bbe0fe62-38d1-11ec-8d3d-0242ac999998"),
+            "https://sun9-40.userapi.com/impg/okrr7lk-uTHQ6Hd7oxroSGAizxD7_vdMvUqIxg/vJnAl-FEDG0.jpg?size=1620x2160&quality=95&sign=f99f69daaee0315ace8912dd5377990a&type=album",
+            "https://sun9-40.userapi.com/impg/okrr7lk-uTHQ6Hd7oxroSGAizxD7_vdMvUqIxg/vJnAl-FEDG0.jpg?size=1620x2160&quality=95&sign=f99f69daaee0315ace8912dd5377990a&type=album",
+            "Customer Name",
+            "Executor Name"
         ).apply {
             this.messages = arrayListOf(
                 Message(
@@ -125,6 +129,10 @@ class ChatService(
                     chat.id,
                     chat.executorId,
                     chat.customerId,
+                    chat.customerAvatar,
+                    chat.executorAvatar,
+                    chat.customerName,
+                    chat.executorName,
                     messages
                 )
             )
@@ -153,6 +161,10 @@ class ChatService(
             chat.id,
             chat.executorId,
             chat.customerId,
+            chat.customerAvatar,
+            chat.executorAvatar,
+            chat.customerName,
+            chat.executorName,
             messages
         )
 
@@ -160,17 +172,25 @@ class ChatService(
     }
 
     @Transactional
-    fun sendMessageForCustomer(customerId: UUID, chatId: UUID, message: SendMessageRequest) {
+    fun sendMessageForCustomer(customerId: UUID, chatId: UUID, message: SendMessageRequest): OneMessageResponse {
         val text = message.text ?: throw Exception("Text is not set")
         val date = message.date ?: throw Exception("Date is not set")
         val chat = chatRepository.findByIdAndCustomerId(chatId, customerId).orElseThrow { Exception("Chat not found") }
-        val message = Message().apply {
+
+        val entity = Message().apply {
             this.authorId = customerId
             this.date = date
             this.text = text
             this.chat = chat
         }
-        messageRepository.save(message)
+        messageRepository.save(entity)
+
+        return OneMessageResponse(
+            entity.id,
+            entity.authorId,
+            entity.text,
+            entity.date
+        )
     }
 
     fun getChatsForExecutor(executorId: UUID): ListChatsResponse {
@@ -193,6 +213,10 @@ class ChatService(
                     chat.id,
                     chat.executorId,
                     chat.customerId,
+                    chat.customerAvatar,
+                    chat.executorAvatar,
+                    chat.customerName,
+                    chat.executorName,
                     messages
                 )
             )
@@ -219,22 +243,34 @@ class ChatService(
             chat.id,
             chat.executorId,
             chat.customerId,
+            chat.customerAvatar,
+            chat.executorAvatar,
+            chat.customerName,
+            chat.executorName,
             messages
         )
         return response
     }
 
     @Transactional
-    fun sendMessageForExecutor(executorId: UUID, chatId: UUID, message: SendMessageRequest) {
+    fun sendMessageForExecutor(executorId: UUID, chatId: UUID, message: SendMessageRequest): OneMessageResponse {
         val text = message.text ?: throw Exception("Text is not set")
         val date = message.date ?: throw Exception("Date is not set")
         val chat = chatRepository.findByIdAndExecutorId(chatId, executorId).orElseThrow { Exception("Chat not found") }
-        val message = Message().apply {
+
+        val entity = Message().apply {
             this.authorId = executorId
             this.date = date
             this.text = text
             this.chat = chat
         }
-        messageRepository.save(message)
+        messageRepository.save(entity)
+
+        return OneMessageResponse(
+            entity.id,
+            entity.authorId,
+            entity.text,
+            entity.date
+        )
     }
 }

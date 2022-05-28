@@ -7,11 +7,11 @@ import java.util.*
 
 @Repository
 interface AppointmentRepository : JpaRepository<Appointment, UUID> {
-    fun findAllByCustomerId(customerId: UUID): List<Appointment> // TODO check this
+    fun findAllByCustomerId(customerId: UUID): List<Appointment>
 
-    fun findByIdAndCustomerId(id: UUID, customerId: UUID): Optional<Appointment> // TODO check this
+    fun findByIdAndCustomerId(id: UUID, customerId: UUID): Optional<Appointment>
 
-    fun findAllByExecutorId(executorId: UUID): List<Appointment> // TODO check this
+    fun findAllByExecutorId(executorId: UUID): List<Appointment>
 
-    fun findByIdAndExecutorId(id: UUID, executorId: UUID): Optional<Appointment> // TODO check this
+    fun findByIdAndExecutorId(id: UUID, executorId: UUID): Optional<Appointment>
 }

@@ -7,7 +7,7 @@ import java.util.*
 
 @Repository
 interface AdvertRepository : JpaRepository<Advert, UUID> {
-    fun findAllByExecutorId(executorId: UUID): List<Advert> // TODO check this
+    fun findAllByExecutorId(executorId: UUID): List<Advert>
 
-    fun findByIdAndExecutorId(id: UUID, executorId: UUID): Optional<Advert> // TODO check this
+    fun findByIdAndExecutorId(id: UUID, executorId: UUID): Optional<Advert>
 }

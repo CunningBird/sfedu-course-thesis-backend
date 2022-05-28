@@ -124,6 +124,7 @@ class AppointmentService(
                 OneAppointmentResponse(
                     appointment.id,
                     appointment.advert?.title,
+                    appointment.advert?.image,
                     appointment.date
                 )
             )
@@ -137,6 +138,7 @@ class AppointmentService(
         return OneAppointmentResponse(
             appointment.id,
             appointment.advert?.title,
+            appointment.advert?.image,
             appointment.date
         )
     }
@@ -148,6 +150,7 @@ class AppointmentService(
                 OneAppointmentResponse(
                     appointment.id,
                     appointment.advert?.title,
+                    appointment.advert?.image,
                     appointment.date
                 )
             )
@@ -161,12 +164,13 @@ class AppointmentService(
         return OneAppointmentResponse(
             appointment.id,
             appointment.advert?.title,
+            appointment.advert?.image,
             appointment.date
         )
     }
 
     @Transactional
-    fun createAppointment(customerId: UUID, advertId: UUID, request: CreateAppointmentRequest) {
+    fun createAppointment(customerId: UUID, advertId: UUID, request: CreateAppointmentRequest): OneAppointmentResponse {
         val date = request.date ?: throw Exception("Date is not set")
         val advert = advertRepository.findById(advertId).orElseThrow { Exception("Advert not found") }
         val appointment = Appointment().apply {
@@ -176,5 +180,11 @@ class AppointmentService(
             this.advert = advert
         }
         appointmentRepository.save(appointment)
+        return OneAppointmentResponse(
+            appointment.id,
+            appointment.advert?.title,
+            appointment.advert?.image,
+            appointment.date
+        )
     }
 }

@@ -13,6 +13,10 @@ data class Chat(
 
     var customerId: UUID? = null,
     var executorId: UUID? = null,
+    val customerAvatar: String? = null,
+    val executorAvatar: String? = null,
+    val customerName: String? = null,
+    val executorName: String? = null,
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "chat", cascade = [CascadeType.ALL])
     var messages: MutableList<Message> = mutableListOf()

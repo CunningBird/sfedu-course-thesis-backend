@@ -9,11 +9,11 @@ import java.util.*
 @Repository
 interface ChatRepository : JpaRepository<Chat, UUID> {
 
-    fun findAllByCustomerId(customerId: UUID): List<Chat> // TODO check this
+    fun findAllByCustomerId(customerId: UUID): List<Chat>
 
-    fun findByIdAndCustomerId(id: UUID, customerId: UUID): Optional<Chat> // TODO check this
+    fun findByIdAndCustomerId(id: UUID, customerId: UUID): Optional<Chat>
 
-    fun findAllByExecutorId(executorId: UUID): List<Chat> // TODO check this
+    fun findAllByExecutorId(executorId: UUID): List<Chat>
 
-    fun findByIdAndExecutorId(id: UUID, executorId: UUID): Optional<Chat> // TODO check this
+    fun findByIdAndExecutorId(id: UUID, executorId: UUID): Optional<Chat>
 }

@@ -2,6 +2,7 @@ package com.cunningbird.thesis.backend.core.controller.executor
 
 import com.cunningbird.thesis.backend.core.dto.request.SendMessageRequest
 import com.cunningbird.thesis.backend.core.dto.response.ListChatsResponse
+import com.cunningbird.thesis.backend.core.dto.response.OneAppointmentResponse
 import com.cunningbird.thesis.backend.core.dto.response.OneChatResponse
 import com.cunningbird.thesis.backend.core.dto.response.OneMessageResponse
 import com.cunningbird.thesis.backend.core.service.ChatService
@@ -39,9 +40,9 @@ class ChatController(
         @RequestHeader("executor_id") executorId: UUID,
         @PathVariable chatId: UUID,
         @RequestBody message: SendMessageRequest
-    ) {
+    ): ResponseEntity<OneMessageResponse> {
         try {
-            service.sendMessageForExecutor(executorId, chatId, message)
+            return ResponseEntity(service.sendMessageForExecutor(executorId, chatId, message), HttpStatus.CREATED)
         } catch (e: Exception) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
         }

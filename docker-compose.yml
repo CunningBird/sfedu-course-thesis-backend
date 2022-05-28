@@ -14,7 +14,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
   core:
-    image: "cunningbird/core:0.0.2"
+    image: "cunningbird/core:0.0.3"
     container_name: core
     build:
       context: core
