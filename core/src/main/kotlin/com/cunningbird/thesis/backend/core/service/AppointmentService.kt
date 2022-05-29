@@ -121,12 +121,7 @@ class AppointmentService(
         val response = ListAppointmentsResponse()
         appointmentRepository.findAllByCustomerId(customerId).forEach { appointment ->
             response.list.add(
-                OneAppointmentResponse(
-                    appointment.id,
-                    appointment.advert?.title,
-                    appointment.advert?.image,
-                    appointment.date
-                )
+                mapAppointmentResponseFromEntity(appointment)
             )
         }
         return response
@@ -135,24 +130,14 @@ class AppointmentService(
     fun getAppointmentForCustomer(customerId: UUID, id: UUID): OneAppointmentResponse {
         val appointment = appointmentRepository.findByIdAndCustomerId(id, customerId)
             .orElseThrow { Exception("Appointment not found") }
-        return OneAppointmentResponse(
-            appointment.id,
-            appointment.advert?.title,
-            appointment.advert?.image,
-            appointment.date
-        )
+        return mapAppointmentResponseFromEntity(appointment)
     }
 
     fun getAppointmentsForExecutor(executorId: UUID): ListAppointmentsResponse {
         val response = ListAppointmentsResponse()
         appointmentRepository.findAllByExecutorId(executorId).forEach { appointment ->
             response.list.add(
-                OneAppointmentResponse(
-                    appointment.id,
-                    appointment.advert?.title,
-                    appointment.advert?.image,
-                    appointment.date
-                )
+                mapAppointmentResponseFromEntity(appointment)
             )
         }
         return response
@@ -161,12 +146,7 @@ class AppointmentService(
     fun getAppointmentForExecutor(executorId: UUID, id: UUID): OneAppointmentResponse {
         val appointment = appointmentRepository.findByIdAndExecutorId(id, executorId)
             .orElseThrow { Exception("Appointment not found") }
-        return OneAppointmentResponse(
-            appointment.id,
-            appointment.advert?.title,
-            appointment.advert?.image,
-            appointment.date
-        )
+        return mapAppointmentResponseFromEntity(appointment)
     }
 
     @Transactional
@@ -180,11 +160,15 @@ class AppointmentService(
             this.advert = advert
         }
         appointmentRepository.save(appointment)
+        return mapAppointmentResponseFromEntity(appointment)
+    }
+
+    private fun mapAppointmentResponseFromEntity(entity: Appointment): OneAppointmentResponse {
         return OneAppointmentResponse(
-            appointment.id,
-            appointment.advert?.title,
-            appointment.advert?.image,
-            appointment.date
+            entity.id,
+            entity.advert?.title,
+            entity.advert?.image,
+            entity.date
         )
     }
 }

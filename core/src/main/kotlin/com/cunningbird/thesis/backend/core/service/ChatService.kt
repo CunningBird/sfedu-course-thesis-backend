@@ -110,65 +110,16 @@ class ChatService(
 
     fun getChatsForCustomer(customerId: UUID): ListChatsResponse {
         val response = ListChatsResponse()
-        val chatInfo = chatRepository.findAllByCustomerId(customerId)
-        chatInfo.forEach { chat ->
-            val messages = mutableListOf<OneMessageResponse>()
-            chat.messages.forEach { message ->
-                messages.add(
-                    OneMessageResponse(
-                        message.id,
-                        message.authorId,
-                        message.text,
-                        message.date
-                    )
-                )
-            }
-
-            response.list.add(
-                OneChatResponse(
-                    chat.id,
-                    chat.executorId,
-                    chat.customerId,
-                    chat.customerAvatar,
-                    chat.executorAvatar,
-                    chat.customerName,
-                    chat.executorName,
-                    messages
-                )
-            )
-
+        val chats = chatRepository.findAllByCustomerId(customerId)
+        chats.forEach { chat ->
+            response.list.add(mapChatResponseFromEntity(chat))
         }
         return response
     }
 
     fun getChatForCustomer(customerId: UUID, id: UUID): OneChatResponse {
-
         val chat = chatRepository.findByIdAndCustomerId(id, customerId).orElseThrow { Exception("Chat not found") }
-
-        val messages = mutableListOf<OneMessageResponse>()
-        chat.messages.forEach { message ->
-            messages.add(
-                OneMessageResponse(
-                    message.id,
-                    message.authorId,
-                    message.text,
-                    message.date
-                )
-            )
-        }
-
-        val response = OneChatResponse(
-            chat.id,
-            chat.executorId,
-            chat.customerId,
-            chat.customerAvatar,
-            chat.executorAvatar,
-            chat.customerName,
-            chat.executorName,
-            messages
-        )
-
-        return response
+        return mapChatResponseFromEntity(chat)
     }
 
     @Transactional
@@ -185,71 +136,21 @@ class ChatService(
         }
         messageRepository.save(entity)
 
-        return OneMessageResponse(
-            entity.id,
-            entity.authorId,
-            entity.text,
-            entity.date
-        )
+        return mapMessageResponseFromEntity(entity)
     }
 
     fun getChatsForExecutor(executorId: UUID): ListChatsResponse {
         val response = ListChatsResponse()
         val chatInfo = chatRepository.findAllByExecutorId(executorId)
         chatInfo.forEach { chat ->
-            val messages = mutableListOf<OneMessageResponse>()
-            chat.messages.forEach { message ->
-                messages.add(
-                    OneMessageResponse(
-                        message.id,
-                        message.authorId,
-                        message.text,
-                        message.date
-                    )
-                )
-            }
-            response.list.add(
-                OneChatResponse(
-                    chat.id,
-                    chat.executorId,
-                    chat.customerId,
-                    chat.customerAvatar,
-                    chat.executorAvatar,
-                    chat.customerName,
-                    chat.executorName,
-                    messages
-                )
-            )
+            response.list.add(mapChatResponseFromEntity(chat))
         }
         return response
     }
 
     fun getChatForExecutor(executorId: UUID, id: UUID): OneChatResponse {
         val chat = chatRepository.findByIdAndExecutorId(id, executorId).orElseThrow { Exception("Chat not found") }
-
-        val messages = mutableListOf<OneMessageResponse>()
-        chat.messages.forEach { message ->
-            messages.add(
-                OneMessageResponse(
-                    message.id,
-                    message.authorId,
-                    message.text,
-                    message.date
-                )
-            )
-        }
-
-        val response = OneChatResponse(
-            chat.id,
-            chat.executorId,
-            chat.customerId,
-            chat.customerAvatar,
-            chat.executorAvatar,
-            chat.customerName,
-            chat.executorName,
-            messages
-        )
-        return response
+        return mapChatResponseFromEntity(chat)
     }
 
     @Transactional
@@ -266,6 +167,28 @@ class ChatService(
         }
         messageRepository.save(entity)
 
+        return mapMessageResponseFromEntity(entity)
+    }
+
+    private fun mapChatResponseFromEntity(entity: Chat): OneChatResponse {
+        val messages = mutableListOf<OneMessageResponse>()
+        entity.messages.forEach { message ->
+            messages.add(mapMessageResponseFromEntity(message))
+        }
+
+        return OneChatResponse(
+            entity.id,
+            entity.executorId,
+            entity.customerId,
+            entity.customerAvatar,
+            entity.executorAvatar,
+            entity.customerName,
+            entity.executorName,
+            messages
+        )
+    }
+
+    private fun mapMessageResponseFromEntity(entity: Message): OneMessageResponse {
         return OneMessageResponse(
             entity.id,
             entity.authorId,

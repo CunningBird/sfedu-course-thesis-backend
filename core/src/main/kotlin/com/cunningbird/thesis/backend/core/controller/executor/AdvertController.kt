@@ -1,5 +1,7 @@
 package com.cunningbird.thesis.backend.core.controller.executor
 
+import com.cunningbird.thesis.backend.core.dto.request.CreateAdvertRequest
+import com.cunningbird.thesis.backend.core.dto.request.UpdateAdvertRequest
 import com.cunningbird.thesis.backend.core.dto.response.ListAdvertsResponse
 import com.cunningbird.thesis.backend.core.dto.response.OneAdvertResponse
 import com.cunningbird.thesis.backend.core.service.AdvertService
@@ -32,15 +34,21 @@ class AdvertController(
         }
     }
 
-//    TODO implement this
-//
-//    @PostMapping
-//    fun createAdvert(@RequestHeader("executor_id") executorId: UUID, @RequestBody request: CreateAdvertRequest) {
-//        service.createAdvert()
-//    }
-//
-//    @PatchMapping("{advertId}")
-//    fun updateAdvert(@RequestHeader("executor_id") executorId: UUID, @PathVariable advertId: UUID, @RequestBody request: UpdateAdvertRequest) {
-//        service.updateAdvert()
-//    }
+    @PostMapping
+    fun createAdvert(@RequestHeader("executor_id") executorId: UUID, @RequestBody request: CreateAdvertRequest): ResponseEntity<OneAdvertResponse> {
+        try {
+            return ResponseEntity(service.createAdvertForExecutor(executorId, request), HttpStatus.OK)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
+        }
+    }
+
+    @PatchMapping("{advertId}")
+    fun updateAdvert(@RequestHeader("executor_id") executorId: UUID, @PathVariable advertId: UUID, @RequestBody request: UpdateAdvertRequest): ResponseEntity<OneAdvertResponse> {
+        try {
+            return ResponseEntity(service.updateAdvertForExecutor(executorId, advertId, request), HttpStatus.OK)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
+        }
+    }
 }

@@ -18,7 +18,4 @@ data class Advert(
     var address: String? = null,
     var description: String? = null,
     var image: String? = null,
-
-//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "advert", cascade = [CascadeType.ALL])
-//    var appointments: MutableList<Appointment> = mutableListOf()
 )
