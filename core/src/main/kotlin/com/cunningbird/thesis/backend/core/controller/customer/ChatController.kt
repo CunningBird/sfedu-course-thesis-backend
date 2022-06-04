@@ -1,12 +1,12 @@
 package com.cunningbird.thesis.backend.core.controller.customer
 
-import com.cunningbird.thesis.backend.core.dto.request.chat.SendMessageRequest
-import com.cunningbird.thesis.backend.core.dto.response.chat.ListChatsResponse
-import com.cunningbird.thesis.backend.core.dto.response.chat.OneChatResponse
+import com.cunningbird.thesis.backend.core.dto.request.SendMessageRequest
+import com.cunningbird.thesis.backend.core.dto.response.*
 import com.cunningbird.thesis.backend.core.service.ChatService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.util.*
 
 @RestController("CustomerChatController")
@@ -14,23 +14,36 @@ import java.util.*
 class ChatController(
     private val service: ChatService
 ) {
-
     @GetMapping
-    fun getChatsForCustomer(@RequestParam customerId: UUID): ResponseEntity<ListChatsResponse> {
-
-        val response = ListChatsResponse(UUID.randomUUID())
-        return ResponseEntity(response, HttpStatus.OK)
+    fun getChats(@RequestHeader("customer_id") customerId: UUID): ResponseEntity<ListChatsResponse> {
+        try {
+            return ResponseEntity(service.getChatsForCustomer(customerId), HttpStatus.OK)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
+        }
     }
 
     @GetMapping("{chatId}")
-    fun getChatForCustomer(@RequestParam customerId: UUID, @PathVariable chatId: UUID): ResponseEntity<OneChatResponse?> {
-
-        val response = OneChatResponse(UUID.randomUUID())
-        return ResponseEntity(response, HttpStatus.OK)
+    fun getChat(@RequestHeader("customer_id") customerId: UUID, @PathVariable chatId: UUID): ResponseEntity<OneChatResponse> {
+        try {
+            return ResponseEntity(service.getChatForCustomer(customerId, chatId), HttpStatus.OK)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
+        }
     }
 
     @PostMapping("{chatId}")
-    fun sendMessageForCustomer(@RequestParam customerId: UUID, @PathVariable chatId: UUID, @RequestBody message: SendMessageRequest) {
-
+    fun sendMessage(
+        @RequestHeader("customer_id") customerId: UUID,
+        @PathVariable chatId: UUID,
+        @RequestBody message: SendMessageRequest
+    ): ResponseEntity<OneMessageResponse> {
+        try {
+            return ResponseEntity(service.sendMessageForCustomer(customerId, chatId, message), HttpStatus.CREATED)
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
+        }
     }
+
+    // TODO implement update method
 }
